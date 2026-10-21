@@ -1,0 +1,45 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Menu Board</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Nunito+Sans:wght@400;600;700&display=swap">
+<style>
+/* Layout: static menu board for a 32" TV; two columns, huge prices, no motion so people can read */
+:root{
+  --bg:#0f2a22; --bg2:#163a2f; --fg:#fbf6ec; --muted:#bcd3c4; --lime:#b8e05a; --mango:#ffb347; --berry:#e2557a;
+  --display:"Fraunces",Georgia,serif; --body:"Nunito Sans","Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);overflow:hidden;cursor:none;
+  display:grid;grid-template-rows:auto 1fr auto;padding:4vh 5vw;gap:3vh}
+header{display:flex;justify-content:space-between;align-items:baseline;border-bottom:.4vh solid var(--lime);padding-bottom:2vh}
+h1{font-family:var(--display);font-weight:800;font-size:6.5vw;margin:0;line-height:1}
+header span{font-size:2.4vw;color:var(--muted)}
+main{display:grid;grid-template-columns:1fr 1fr;gap:3vh 5vw;align-content:center}
+.sec h2{font-weight:700;letter-spacing:.16em;text-transform:uppercase;font-size:2.2vw;color:var(--lime);margin:0 0 1.5vh}
+.item{display:flex;justify-content:space-between;align-items:baseline;gap:2vw;padding:1.4vh 0;border-bottom:1px dashed var(--bg2)}
+.item b{font-family:var(--display);font-weight:600;font-size:3.4vw}
+.item small{display:block;font-size:1.8vw;color:var(--muted);font-weight:400}
+.price{font-family:var(--display);font-weight:800;font-size:3.6vw;color:var(--mango);font-variant-numeric:tabular-nums;white-space:nowrap}
+footer{display:flex;justify-content:space-between;font-size:2vw;color:var(--muted)}
+footer b{color:var(--fg)}
+</style></head><body>
+<header><h1>Menú</h1><span>Pregunta por el especial de hoy · Ask for today's special</span></header>
+<main>
+  <div class="sec">
+    <h2>Licuados · Shakes</h2>
+    <div class="item"><div><b>Fresa</b><small>Strawberry</small></div><div class="price">$—</div></div>
+    <div class="item"><div><b>Mango</b><small>Mango</small></div><div class="price">$—</div></div>
+    <div class="item"><div><b>Cookies &amp; Cream</b><small>Cookies &amp; cream</small></div><div class="price">$—</div></div>
+    <div class="item"><div><b>Chocolate</b><small>Chocolate</small></div><div class="price">$—</div></div>
+  </div>
+  <div class="sec">
+    <h2>Tés · Teas</h2>
+    <div class="item"><div><b>Té de energía</b><small>Energy tea</small></div><div class="price">$—</div></div>
+    <div class="item"><div><b>Té de limón</b><small>Lemon tea</small></div><div class="price">$—</div></div>
+    <h2 style="margin-top:3vh">Combos</h2>
+    <div class="item"><div><b>Licuado + té</b><small>Shake + tea</small></div><div class="price">$—</div></div>
+  </div>
+</main>
+<footer><span>Síguenos · Follow us <b>@tu_club</b></span><span>Demo · precios pendientes</span></footer>
+<script>setTimeout(function(){location.reload()},30*60*1000)</script>
+</body></html>
