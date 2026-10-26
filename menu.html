@@ -31,6 +31,7 @@ footer b{color:var(--cream)}
 .qr{display:flex;align-items:center;gap:20px}
 .qr img{width:92px;height:92px;border-radius:10px}
 </style></head><body>
+<div id="closed" style="display:none;position:fixed;inset:0;background:#000;z-index:99"></div>
 <div id="stage">
   <header><h1>Nuestro menú</h1><span>Pregunta por los sabores de hoy</span></header>
   <main>
@@ -56,6 +57,14 @@ footer b{color:var(--cream)}
 </div>
 <script>
 (function(){var st=document.getElementById('stage');function fit(){var w=Math.min(innerWidth,screen.width||innerWidth),h=Math.min(innerHeight,screen.height||innerHeight),k=Math.min(w/1920,h/1080);st.style.transform='translate(-50%,-50%) scale('+k+')'}fit();addEventListener('resize',fit);
-setInterval(function(){fetch(location.href,{cache:'no-store',method:'HEAD'}).then(function(r){if(r.ok)location.reload()}).catch(function(){})},30*60*1000)})();
+var HORARIO={encender:'06:59', apagar:'12:01', dias:[0,1,2,3,4,5,6]};
+function mins(t){var p=t.split(':');return (+p[0])*60+(+p[1])}
+function isOnTime(){var d=new Date(),m=d.getHours()*60+d.getMinutes();return HORARIO.dias.indexOf(d.getDay())>=0&&m>=mins(HORARIO.encender)&&m<mins(HORARIO.apagar)}
+var isClosed=false;
+function closeTv(){if(isClosed)return;isClosed=true;document.getElementById('closed').style.display='block';
+  setTimeout(function(){try{if(window.fully&&fully.turnScreenOff)fully.turnScreenOff()}catch(e){}},2000)}
+setInterval(function(){if(!isOnTime())closeTv();else if(isClosed){try{if(window.fully&&fully.turnScreenOn)fully.turnScreenOn()}catch(e){}setTimeout(function(){location.reload()},1500)}},20000);
+if(!isOnTime())setTimeout(closeTv,500);
+setInterval(function(){if(isClosed)return;fetch(location.href,{cache:'no-store',method:'HEAD'}).then(function(r){if(r.ok)location.reload()}).catch(function(){})},30*60*1000)})();
 </script>
 </body></html>
