@@ -627,22 +627,22 @@ var MUSICA=['musica1.mp3','musica2.mp3','musica3.mp3','musica4.mp3'], MUSICA_VOL
       setTimeout(function(){requestAnimationFrame(draw)},33)}
     draw()})();
   function isOnTimeBoot(){var d=new Date(),m=d.getHours()*60+d.getMinutes(),p=function(t){var q=t.split(':');return (+q[0])*60+(+q[1])};return HORARIO.dias.indexOf(d.getDay())>=0&&m>=p(HORARIO.encender)&&m<p(HORARIO.apagar)}
-  var au=new Audio(),mi=0,mFails=0,mTarget=MUSICA_VOL,mFadeT=null;au.preload='auto';au.volume=0;
-  function mNext(){if(!MUSICA.length)return;au.src=MUSICA[mi%MUSICA.length]+'?v=1';mi++;var p=au.play();if(p&&p.catch)p.catch(function(){})}
+  var isClosed=false;var au=new Audio(),mi=0,mFails=0,mTarget=MUSICA_VOL,mFadeT=null;au.preload='auto';au.volume=0;
+  function mNext(){if(!MUSICA.length||isClosed)return;au.src=MUSICA[mi%MUSICA.length]+'?v=1';mi++;var p=au.play();if(p&&p.catch)p.catch(function(){})}
   au.addEventListener('ended',function(){mFails=0;mNext()});
   au.addEventListener('error',function(){if(++mFails<MUSICA.length)mNext()});
   au.addEventListener('playing',function(){mFails=0;fadeTo(mTarget,2000)});
   function fadeTo(v,ms){mTarget=v;if(mFadeT)clearInterval(mFadeT);var st=au.volume,t0=Date.now();
     mFadeT=setInterval(function(){var k=Math.min(1,(Date.now()-t0)/ms);au.volume=Math.max(0,Math.min(1,st+(v-st)*k));if(k>=1){clearInterval(mFadeT);mFadeT=null;if(v===0)au.pause()}},50)}
   function musicDown(){fadeTo(0,1500)}
-  function musicUp(){if(au.paused&&au.src){var p=au.play();if(p&&p.catch)p.catch(function(){})}fadeTo(MUSICA_VOL,2500)}
+  function musicUp(){if(isClosed){au.pause();return}if(au.paused&&au.src){var p=au.play();if(p&&p.catch)p.catch(function(){})}fadeTo(MUSICA_VOL,2500)}
   if(isOnTimeBoot())mNext();
   var yt=null,ytReady=false,ytCb=null,ytT=null;
   window.onYouTubeIframeAPIReady=function(){ytReady=true};
   (function(){var t=document.createElement('script');t.src='https://www.youtube.com/iframe_api';document.head.appendChild(t)})();
   var wrap=document.getElementById('ytwrap'),ytPoll=null;
   function endVid(){if(ytT){clearTimeout(ytT);ytT=null}if(ytPoll){clearInterval(ytPoll);ytPoll=null}
-    var c=ytCb;ytCb=null;wrap.style.opacity=0;musicUp();
+    var c=ytCb;ytCb=null;wrap.style.opacity=0;if(isClosed)return;musicUp();
     setTimeout(function(){try{yt&&yt.stopVideo()}catch(e){}},1000);if(c)c()}
   function onPlay(){wrap.style.opacity=1;if(!ytPoll)ytPoll=setInterval(function(){try{var d=yt.getDuration(),t=yt.getCurrentTime();if(d>0&&t>=d-1.2)endVid()}catch(e){}},300)}
   function setTv(){try{if(window.fully&&fully.setAudioVolume)fully.setAudioVolume(TV_VOL,3)}catch(e){}}
@@ -656,12 +656,12 @@ var MUSICA=['musica1.mp3','musica2.mp3','musica3.mp3','musica4.mp3'], MUSICA_VOL
   }
   function mins(t){var p=t.split(':');return (+p[0])*60+(+p[1])}
   function isOnTime(){var d=new Date(),m=d.getHours()*60+d.getMinutes(),on=mins(HORARIO.encender),off=mins(HORARIO.apagar);return HORARIO.dias.indexOf(d.getDay())>=0&&m>=on&&m<off}
-  var isClosed=false;
   function closeTv(){if(isClosed)return;isClosed=true;document.getElementById('closed').style.display='block';try{fadeTo(0,1500)}catch(e){}
-    try{if(ytCb){var c=ytCb;ytCb=null;wrap.style.opacity=0;yt&&yt.stopVideo()}}catch(e){}
+    try{if(ytT){clearTimeout(ytT);ytT=null}if(ytPoll){clearInterval(ytPoll);ytPoll=null}ytCb=null;wrap.style.opacity=0;yt&&yt.stopVideo()}catch(e){}
+    setTimeout(function(){try{au.pause();au.volume=0}catch(e){}},1800);
     setTimeout(function(){try{if(window.fully&&fully.turnScreenOff)fully.turnScreenOff()}catch(e){}},2000);
     var iv=setInterval(function(){if(isOnTime()){clearInterval(iv);try{if(window.fully&&fully.turnScreenOn)fully.turnScreenOn()}catch(e){}setTimeout(function(){location.reload()},1500)}},20000)}
-  setInterval(function(){if(!isOnTime())closeTv()},20000);
+  setInterval(function(){if(!isOnTime()){closeTv();try{if(!au.paused){au.pause();au.volume=0}yt&&yt.stopVideo()}catch(e){}}},20000);
   function next(){if(!isOnTime()){closeTv();return}go();schedule()}
   function schedule(){var el=S[i],id=el.getAttribute('data-yt'),sec=+el.getAttribute('data-sec')||SEC;
     if(id){playVid(id,next,sec)}else{setTimeout(next,sec*1000)}}
